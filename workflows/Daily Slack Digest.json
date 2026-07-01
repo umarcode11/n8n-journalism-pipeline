@@ -1,0 +1,147 @@
+{
+  "name": "Daily Slack Digest",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 12
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "fa9f54be-8e32-4506-b206-546fb4ce822c",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1h2Vd_Ua8zhEctWkGUfB7zLy4SVLrF7ySmrdOKjPeCxw",
+          "mode": "list",
+          "cachedResultName": "Vlog Monitor",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h2Vd_Ua8zhEctWkGUfB7zLy4SVLrF7ySmrdOKjPeCxw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Email Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h2Vd_Ua8zhEctWkGUfB7zLy4SVLrF7ySmrdOKjPeCxw/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "56c88a40-6288-4453-945d-3cf4cbbca4e4",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QcJBpmNf9znmTtLL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all();\nconst today = new Date().toISOString().split('T')[0];\n\n// Filter for today's rows with score 50 or above\nconst highScoreRows = rows.filter(row => {\n  const timestamp = row.json.Timestamp || '';\n  const score = parseInt(row.json.Score) || 0;\n  const isToday = timestamp.startsWith(today);\n  return isToday && score >= 50;\n});\n\nif (highScoreRows.length === 0) {\n  return [{\n    json: {\n      message: '*Journalism Intelligence Digest — No high-priority items today.*'\n    }\n  }];\n}\n\nlet digest = '*Journalism Intelligence Digest — ' + new Date().toDateString() + '*\\n';\ndigest += '━━━━━━━━━━━━━━━━━━━━━━\\n\\n';\n\nhighScoreRows.forEach((row, index) => {\n  digest += '*' + (index + 1) + '. ' + (row.json.Subject || 'No subject') + '*\\n';\n  digest += '📧 From: ' + (row.json.From || '') + '\\n';\n  digest += '🎯 Score: ' + row.json.Score + ' | Beat: ' + (row.json.Beat || '') + '\\n';\n  digest += '📝 ' + (row.json.Summary || '') + '\\n';\n  digest += '⚡ ' + (row.json.Action || '') + '\\n\\n';\n});\n\nreturn [{\n  json: {\n    message: digest\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "7881a5dd-0bab-4239-9b1d-9bfeb8d0a538",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BDBAE48SJ",
+          "mode": "id"
+        },
+        "text": "={{ $json.message }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        624,
+        0
+      ],
+      "id": "7e89b2dc-2017-461f-a24c-2ad3a9373932",
+      "name": "Send a message",
+      "webhookId": "927c8c9d-8961-442f-85b3-186db0c03367",
+      "credentials": {
+        "slackApi": {
+          "id": "kHlHS3pUctwmVPU5",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "c08e1703-c53a-4817-9f39-a615cc3668d8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c0143cd9fca4be8ef22bee86aee6ba7f20af4afe159c52c480a5adb025b90457"
+  },
+  "nodeGroups": [],
+  "id": "4MxDy3VvbSaIlPr7",
+  "tags": []
+}

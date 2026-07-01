@@ -1,0 +1,448 @@
+{
+  "name": "Journalism Intelligence Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "70fcdedb-9bfa-4e45-bcde-e64277815619",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "eslXfCPdP6jQMpBe",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1h2Vd_Ua8zhEctWkGUfB7zLy4SVLrF7ySmrdOKjPeCxw",
+          "mode": "list",
+          "cachedResultName": "Vlog Monitor",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h2Vd_Ua8zhEctWkGUfB7zLy4SVLrF7ySmrdOKjPeCxw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Email Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h2Vd_Ua8zhEctWkGUfB7zLy4SVLrF7ySmrdOKjPeCxw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $json.timestamp }}",
+            "From": "={{ $json.from }}",
+            "Subject": "={{ $json.subject }}",
+            "Score": "={{ $json.score }}",
+            "Beat": "={{ $json.beat }}",
+            "Summary": "={{ $json.summary }}",
+            "Action": "={{ $json.action }}"
+          },
+          "matchingColumns": [
+            "Timestamp"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "From",
+              "displayName": "From",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Subject",
+              "displayName": "Subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Beat",
+              "displayName": "Beat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Action",
+              "displayName": "Action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        576,
+        96
+      ],
+      "id": "20aca81f-792a-4b78-9db5-3d92b6c569ab",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QcJBpmNf9znmTtLL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1h2Vd_Ua8zhEctWkGUfB7zLy4SVLrF7ySmrdOKjPeCxw",
+          "mode": "list",
+          "cachedResultName": "Vlog Monitor",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h2Vd_Ua8zhEctWkGUfB7zLy4SVLrF7ySmrdOKjPeCxw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Email Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h2Vd_Ua8zhEctWkGUfB7zLy4SVLrF7ySmrdOKjPeCxw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $json.timestamp }}",
+            "From": "={{ $json.from }}",
+            "Subject": "={{ $json.subject }}",
+            "Score": "={{ $json.score }}",
+            "Beat": "={{ $json.beat }}",
+            "Summary": "={{ $json.summary }}",
+            "Action": "={{ $json.action }}"
+          },
+          "matchingColumns": [
+            "Timestamp"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "From",
+              "displayName": "From",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Subject",
+              "displayName": "Subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Beat",
+              "displayName": "Beat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Action",
+              "displayName": "Action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        576,
+        -80
+      ],
+      "id": "896c540f-c65a-42ee-bfee-b64956f99ba2",
+      "name": "Append or update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QcJBpmNf9znmTtLL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "https://docs.google.com/document/d/1nlX8fPIaatp31q2_K4EdAXclqVwMBiTKG51Pp0zF9v8/edit?tab=t.0",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "=---\n{{ $json.Timestamp }} \nFrom: {{ $json.From }}\nSubject: {{ $json.Subject }}\nScore: {{ $json.Score }} | Beat: {{ $json.Beat }}\nSummary: {{ $json.Summary }}\nAction: {{ $json.Action }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        736,
+        -96
+      ],
+      "id": "9a416f07-4f36-4a18-b9be-49219ce341df",
+      "name": "Update a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "mZaLdhGZ3ypSAwiA",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const emailFrom = $input.first().json.From || '';\nconst emailSubject = $input.first().json.Subject || '';\nconst emailSnippet = $input.first().json.snippet || '';\nconst openRouterKey = 'YOUR_OPENROUTER_API_KEY';\n\nconst body = {\n  model: 'anthropic/claude-haiku-4-5',\n  messages: [\n    {\n      role: 'system',\n      content: 'You are an editorial assistant for Pakistani journalist Umar Cheema. Score emails 0-100 for relevance to his beats: civil-military relations, judiciary, NAB, PTI/PMLN, AJK, press freedom, corruption, civil service, education, health, human rights, gender violence, minorities, inequality, environment, government failure in Pakistan. Social issue tips score minimum 40. Return only valid JSON with fields score, beat, summary, action.'\n    },\n    {\n      role: 'user',\n      content: 'From: ' + emailFrom + '\\nSubject: ' + emailSubject + '\\nBody: ' + emailSnippet\n    }\n  ]\n};\n\nconst response = await this.helpers.request({\n  method: 'POST',\n  url: 'https://openrouter.ai/api/v1/chat/completions',\n  headers: {\n    'Authorization': 'Bearer ' + openRouterKey,\n    'Content-Type': 'application/json'\n  },\n  body: JSON.stringify(body)\n});\n\nconst data = JSON.parse(response);\nconst raw = data.choices[0].message.content;\nconst cleaned = raw.replace(/```json\\n?/g, '').replace(/```/g, '').trim();\nconst parsed = JSON.parse(cleaned);\n\nreturn [{\n  json: {\n    score: parsed.score,\n    beat: parsed.beat,\n    summary: parsed.summary,\n    action: parsed.action,\n    from: emailFrom,\n    subject: emailSubject,\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "bc736f6b-ffff-43a5-a8f4-d3a4ee684c3e",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "09c4d3f8-83b5-4bc8-8622-6f0dcd7ee831",
+              "leftValue": "={{ $json.score }}",
+              "rightValue": 50,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "4541c9bc-4f91-46a7-a1e4-84e3c9038a8a",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "umarcheema313@gmail.com"
+        },
+        "start": "={{ $now.plus(1, 'day').startOf('hour') }}",
+        "end": "={{ $now.plus(1, 'day').plus(1, 'hour') }}",
+        "additionalFields": {
+          "description": "=From: {{ $json.from }}\\nBeat: {{ $json.beat }}\\nAction: {{ $json.action }}",
+          "summary": "=Follow up: {{ $json.subject }} (Score: {{ $json.score }})"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        944,
+        -96
+      ],
+      "id": "f9fcb48e-308f-45be-a288-8710628ffd4a",
+      "name": "Create an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "2Fs9hC2wgaxB1SvQ",
+          "name": "Google Calendar account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Update a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a document": {
+      "main": [
+        [
+          {
+            "node": "Create an event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "79fb7cad-b0df-4b5f-96f7-d20534f74af3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c0143cd9fca4be8ef22bee86aee6ba7f20af4afe159c52c480a5adb025b90457"
+  },
+  "nodeGroups": [],
+  "id": "MpSZB0XgTCtdNRFC",
+  "tags": []
+}

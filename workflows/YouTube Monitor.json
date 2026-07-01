@@ -1,0 +1,290 @@
+{
+  "name": "YouTube Monitor",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "feedUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UCwAdehKNW9mb7uniuJh279A"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        -16
+      ],
+      "id": "f7c37c23-be88-4f99-b03c-44eed597ed77",
+      "name": "RSS Feed Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "const title = $input.first().json.title || '';\nconst link = $input.first().json.link || '';\nconst author = $input.first().json.author || '';\nconst pubDate = $input.first().json.isoDate || '';\nconst videoId = link.split('v=')[1] || '';\nconst supadataKey = 'YOUR_SUPADATA_API_KEY';\nconst openRouterKey = 'YOUR_OPENROUTER_API_KEY';\n\nconst transcriptResponse = await this.helpers.request({\n  method: 'GET',\n  url: 'https://api.supadata.ai/v1/youtube/transcript?videoId=' + videoId + '&text=true',\n  headers: {\n    'x-api-key': supadataKey\n  }\n});\n\nconst transcriptData = JSON.parse(transcriptResponse);\nconst transcript = transcriptData.content ? transcriptData.content.substring(0, 6000) : title;\n\nconst body = {\n  model: 'anthropic/claude-haiku-4-5',\n  messages: [\n    {\n      role: 'system',\n      content: 'You are an editorial assistant for Pakistani investigative journalist Umar Cheema. Analyze the following YouTube video transcript and extract: 1) Key Takeaways (5-7 bullet points of the main points discussed), 2) Main Argument (the central thesis in 2 sentences), 3) Notable Claims (any specific allegations, revelations, or claims made), 4) Follow Up (should Umar follow up on anything raised here - yes/no and why). Return only valid JSON with fields: takeaways (array), main_argument, notable_claims, follow_up.'\n    },\n    {\n      role: 'user',\n      content: 'Channel: ' + author + '\\nTitle: ' + title + '\\nTranscript: ' + transcript\n    }\n  ]\n};\n\nconst aiResponse = await this.helpers.request({\n  method: 'POST',\n  url: 'https://openrouter.ai/api/v1/chat/completions',\n  headers: {\n    'Authorization': 'Bearer ' + openRouterKey,\n    'Content-Type': 'application/json'\n  },\n  body: JSON.stringify(body)\n});\n\nconst data = JSON.parse(aiResponse);\nconst raw = data.choices[0].message.content;\nconst cleaned = raw.replace(/```json\\n?/g, '').replace(/```/g, '').trim();\nlet parsed;\ntry {\n  parsed = JSON.parse(cleaned);\n} catch(e) {\n  parsed = {\n    takeaways: ['Could not auto-analyze. Watch video directly.'],\n    main_argument: 'Analysis unavailable for this video.',\n    notable_claims: 'N/A',\n    follow_up: 'Review manually'\n  };\n}\n\nconst takeaways = parsed.takeaways.map(t => '• ' + t).join('\\n');\n\nconst message = '*New Video: ' + author + '*\\n' +\n  '*Title*: ' + title + '\\n' +\n  '*Link*: ' + link + '\\n\\n' +\n  '*Key Takeaways:*\\n' + takeaways + '\\n\\n' +\n  '*Main Argument*: ' + parsed.main_argument + '\\n\\n' +\n  '*Notable Claims*: ' + parsed.notable_claims + '\\n\\n' +\n  '*Follow Up?*: ' + parsed.follow_up;\n\nreturn [{\n  json: {\n    message: message,\n    title: title,\n    link: link,\n    author: author,\n    timestamp: pubDate\n  }\n}]; "
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "dd8828b2-b8f9-4fd5-a1f7-42421c7a5aac",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BDBAE48SJ",
+          "mode": "id"
+        },
+        "text": "={{ $json.message }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        416,
+        0
+      ],
+      "id": "747daf98-013c-47a6-97db-8cd9e3bf3d41",
+      "name": "Send a message",
+      "webhookId": "215b9725-0593-468b-abe4-03203445a2c2",
+      "credentials": {
+        "slackApi": {
+          "id": "kHlHS3pUctwmVPU5",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "feedUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UCyR7iLc73OW1kuW3qnvGVBQ"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        224
+      ],
+      "id": "f57baffe-ad76-4a1f-b825-1515031995ea",
+      "name": "RSS Feed Trigger1"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "feedUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UClDtMswg3muouH60XTKlVEw"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -128
+      ],
+      "id": "c5686a3a-4343-4f21-b378-09c69161a508",
+      "name": "RSS Feed Trigger2"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "feedUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UCYNS-_653RIE9x_BINefAMA"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        112
+      ],
+      "id": "8b96fc90-3fba-4bf0-9e5b-3ecf87d7832d",
+      "name": "RSS Feed Trigger3"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "feedUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UC57P3Cnt2Lq2W310oJxe7sA"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        -272
+      ],
+      "id": "47038adc-aee1-4d7a-8a15-36de7e37e00f",
+      "name": "RSS Feed Trigger4"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "feedUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UCX47TENBUCcfLluIlgV1K0Q"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        -288
+      ],
+      "id": "e6bd5f70-71a3-4646-a88c-a2467ec9849f",
+      "name": "RSS Feed Trigger5"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "feedUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UCeIlqMnwrA-ury_RzJbZ1EA"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        32,
+        288
+      ],
+      "id": "1178cce6-bca1-4c51-adfa-549f92a47ae8",
+      "name": "RSS Feed Trigger6"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "RSS Feed Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Feed Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Feed Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Feed Trigger3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Feed Trigger4": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Feed Trigger5": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Feed Trigger6": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "efdbd8f7-f1df-4734-85de-74faa4d00268",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c0143cd9fca4be8ef22bee86aee6ba7f20af4afe159c52c480a5adb025b90457"
+  },
+  "nodeGroups": [],
+  "id": "oIvTCKa1hzoaBnZQ",
+  "tags": []
+}
