@@ -2,6 +2,12 @@
 
 
 
+\## Demo Video
+
+https://drive.google.com/file/d/1E7SOqwFhRWor92s5bWKUOitGd7HnUDYp/view?usp=drive\_link
+
+
+
 An automated intelligence-gathering system built in \[n8n](https://n8n.io) (a visual workflow automation tool) for investigative journalism. It monitors incoming tips and public YouTube commentary, scores them for editorial relevance using AI, and routes high-priority items to a daily briefing.
 
 
